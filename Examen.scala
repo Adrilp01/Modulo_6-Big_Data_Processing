@@ -8,7 +8,7 @@ import org.apache.spark.sql.types._
 
 object examen {
 
-  lazy val spark: SparkSession = SparkSession.builder()
+  implicit val spark: SparkSession = SparkSession.builder()
     .appName("Examen")
     .master("local[*]")
     .getOrCreate()
