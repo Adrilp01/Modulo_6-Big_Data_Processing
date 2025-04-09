@@ -34,7 +34,7 @@ object examen {
     df.printSchema()
     println("Imprimo calificaciones mayores a 8")
     df.filter("Calificacion > 8").show()
-    println("Imprimo nombres ordenados por calificacion") //si quisiera mostrar solo los nombres tendria que quitar las calificaciones del select
+    println("Imprimo nombres ordenados por calificacion") //si quisiera mostrar solo los nombres tendía que quitar las calificaciones del select
     df.select("Nombre", "Calificacion").orderBy(col("Calificacion").desc).show()
     println("Imprimo dataframe")
     df.show()
@@ -77,11 +77,15 @@ object examen {
   val df1 = spark.createDataFrame(spark.sparkContext.parallelize(estudiantes1), schema1)
 
   val estudiantes2 = Seq(
-    Row(1, "Matematicas", 9),
-    Row(2, "Literatura", 6),
-    Row(3, "Ciencia", 3),
-    Row(4, "Historia", 10),
-    Row(5, "Economia", 1)
+    Row(1, "Matematicas", 10),
+    Row(1, "Literatura", 4),
+    Row(2, "Literatura", 4),
+    Row(2, "Historia", 7),
+    Row(3, "Ciencia", 6),
+    Row(3, "Historia", 4),
+    Row(4, "Historia",  4),
+    Row(5, "Matematicas", 6),
+    Row(5, "Economia", 0)
   )
   val schema2 = StructType(Seq(
     StructField("ID_estudiante", IntegerType, nullable = false),
@@ -91,9 +95,11 @@ object examen {
   val df2 = spark.createDataFrame(spark.sparkContext.parallelize(estudiantes2), schema2)
 
   def ejercicio3(df1: DataFrame , df2: DataFrame): DataFrame = {
-    val result = df1.join(df2, df1("id") === df2("id_estudiante"))
+    val result = df1.join(df2, df1("ID") === df2("ID_estudiante"))
+    val medias = result.groupBy("ID", "Nombre").agg(avg("Calificacion").alias("Media"))
     result.show()
-    result
+    medias.show()
+    medias
   }
 
 
@@ -114,11 +120,11 @@ object examen {
     .csv("C:\\Users\\adril\\Desktop\\Módulos KC\\Data Processing\\Data processing\\Examen\\ventas.csv")
 
   def ejercicio5(ventas: DataFrame)(implicit spark:SparkSession): DataFrame = {
-    val dfConIngreso = dfcsv.withColumn("dineroXid", col("cantidad") * col("precio_unitario"))
+    val cantXprecio = dfcsv.withColumn("dineroXid", col("cantidad") * col("precio_unitario"))
 
-    val dineroXProducto = dfConIngreso.groupBy("id_producto").agg(sum("dineroXid").alias("dineroXproducto"))
+    val totalXProducto = cantXprecio.groupBy("id_producto").agg(sum("dineroXid").alias("dineroXproducto"))
 
-    val en_orden = dineroXProducto.orderBy(desc("id_producto")) //lo ordeno para que quede mas claro el resultado
+    val en_orden = totalXProducto.orderBy(desc("id_producto")) //lo ordeno para que quede mas claro el resultado
 
     en_orden.show()
     en_orden
