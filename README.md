@@ -1,0 +1,1 @@
+In this practice, I worked with Scala, using Apache Spark. I created DataFrames, joined different DataFrames, and applied filters and calculations to visualize the information in a simpler way or from different perspectives.
